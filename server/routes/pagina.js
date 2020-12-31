@@ -89,6 +89,7 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_color"]  = rs_child.ti_colreg;
                 objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg;
                 objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten;
+                objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel;
             };
     
             arrObj.push(objReg);
@@ -114,16 +115,35 @@ app.post('/propag', async (req, res) => {
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.pagina_propag_js(${params.id_pagina}, null);`;
 
-    // Conectar y Ejecutar Query - Buscar JS de la Pagina
-    const execPageJS = await db.query(query_propagjs);
-    const resultPropagJS = execPageJS.rows[0];
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_propagjs);
 
-    // Ejecutar JS Pagina y crear la funcion
-    eval(resultPropagJS.js_page);
-    
-    procesarPropag(body, params.id_pagina, params.id_boton).then( x => {
-        res.status(200).send({mensaje: 'se proceso correctamente'});
-    })    
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                error: { message: 'No existe el Propag JS de la pagina' }
+            });
+        };
+
+        // Ejecutar JS Pagina y crear la funcion
+        eval(resultPropagJS.js_page);
+        
+        procesarPropag(body, params.id_pagina, params.id_boton).then( x => {
+            res.status(200).send({mensaje: 'se proceso correctamente'});
+        })
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
 });
 
 // ============================
