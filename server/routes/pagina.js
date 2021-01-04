@@ -34,7 +34,7 @@ app.get('/pagina', async (req, res) => {
         const execPageInf = await db.query(query_valpag);
         const resultPageInfo = execPageInf.rows[0];
 
-        // No Existe Data?
+        // No Existe la Pagina?
         if (!resultPageInfo) {
             // Respuesta (Bad Request - 400)
             return res.status(400).json({
@@ -46,25 +46,33 @@ app.get('/pagina', async (req, res) => {
         const execPageJS = await db.query(query_valpagjs);
         const resultPageJS = execPageJS.rows[0];
 
-        // No Existe Data?
+        // No Existe JS de la Pagina?
         if (!resultPageJS) {
-            // Respuesta (Bad Request - 400)
-            return res.status(400).json({
-                error: { message: 'No existe el JS de la pagina' }
-            });
-        };
+            // [querys] Informacion del JS con el valpag de la Pagina
+            let query_regist_page = `select * from frame.pagina_regist(${params.id_pagina});`;
 
-        // Ejecutar JS Pagina y crear la funcion
-        eval(resultPageJS.js_page);
+            // Conectar y Ejecutar Query - Buscar Registros de la Pagina
+            const execRegistJS = await db.query(query_regist_page);
+            const resultRegistJS = execRegistJS.rows[0].pagina_regist;
 
-        // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
-        procesarValpag(params.id_pagina).then( async data_page => {
             //Agregar los Registros de la pagina al Json de Data de la Pagina
-            resultPageInfo.data_page = data_page;
+            resultPageInfo.data_page = resultRegistJS;
 
             // Respuesta (OK - 200)
             res.status(200).json(resultPageInfo);
-        });
+        } else {
+            // Ejecutar JS Pagina y crear la funcion
+            eval(resultPageJS.js_page);
+
+            // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
+            procesarValpag(params.id_pagina).then( async data_page => {
+                //Agregar los Registros de la pagina al Json de Data de la Pagina
+                resultPageInfo.data_page = data_page;
+
+                // Respuesta (OK - 200)
+                res.status(200).json(resultPageInfo);
+            });
+        };
     } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
@@ -129,13 +137,188 @@ app.post('/propag', async (req, res) => {
                 error: { message: 'No existe el Propag JS de la pagina' }
             });
         };
-
+ 
         // Ejecutar JS Pagina y crear la funcion
         eval(resultPropagJS.js_page);
         
         procesarPropag(body, params.id_pagina, params.id_boton).then( x => {
             res.status(200).send({mensaje: 'se proceso correctamente'});
         })
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.post('/pagina-propag', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    console.log('query params', params);
+    console.log('en el body', body);
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_propagjs = `select * from frame.set_pagina_propag(${params.id_pagina}, '${params.js_propag}');`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_propagjs);
+
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                error: { message: 'No se pudo actualizar el propag' }
+            });
+        };
+ 
+        res.status(200).send({mensaje: 'se proceso correctamente el propag'});
+
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.get('/pagina-propag', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    console.log('query params', params);
+    console.log('en el body', body);
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_propagjs = `select * from frame.get_pagina_propag(${params.id_pagina});`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_propagjs);
+
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Ok - 400)
+            return res.status(200).json({
+                propag: ''
+            });
+        };
+ 
+        res.status(200).json({
+            propag: resultPropagJS.propag
+        });
+
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.post('/pagina-valpag', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    console.log('query params', params);
+    console.log('en el body', body);
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_propagjs = `select * from frame.set_pagina_valpag(${params.id_pagina},'${params.js_valpag}');`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_propagjs);
+
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                error: { message: 'No se pudo actualizar el valpag' }
+            });
+        };
+ 
+        res.status(200).send({mensaje: 'se proceso correctamente el valpag'});
+
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.get('/pagina-valpag', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    console.log('query params', params);
+    console.log('en el body', body);
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_propagjs = `select * from frame.get_pagina_valpag(${params.id_pagina});`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_propagjs);
+
+        // Obtiene el Resultado del Propag
+        const resultValpagJS = execPageJS.rows[0];
+
+        // No Existe Valpag?
+        if (!resultValpagJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(200).json({
+                valpag: ''
+            });
+        };
+
+        res.status(200).json({
+            valpag: resultValpagJS.valpag
+        });
     } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
