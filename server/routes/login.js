@@ -49,6 +49,7 @@ app.post('/login', async (req, res) => {
         // Respuesta (OK - 200)
         res.status(200).json({
             usuario: dataLogin.usuario,
+            nombreUsuario: dataLogin.no_usulog,
             token: token,
             valid: true
         });
