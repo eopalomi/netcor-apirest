@@ -35,6 +35,7 @@ app.post('/login', async (req, res) => {
             // Respuesta (Bad Request - 400)
             return res.status(400).json({
                 valid: false,
+                query: query,
                 error: { message: '(Usuario) o contraseña incorrectos' }
             });
         };
