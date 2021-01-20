@@ -76,7 +76,8 @@ app.get('/pagina', async (req, res) => {
             };
             
             // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
-            procesarValpag(objParams).then(data_page => {
+            procesarValpag(objParams)
+            .then(data_page => {
                 //Agregar los Registros de la pagina al Json de Data de la Pagina
                 resultPageInfo.data_page = data_page;
 
@@ -107,13 +108,13 @@ app.get('/pagina', async (req, res) => {
             const objReg = new Object();
     
             for (let rs_child of rs_parent) {
-                objReg["regist_" + rs_child.co_pagreg]             = rs_child.va_pagreg;
-                objReg["regist_" + rs_child.co_pagreg + "_type"]   = rs_child.ti_pagreg;
-                objReg["regist_" + rs_child.co_pagreg + "_est"]    = rs_child.ti_estreg;
-                objReg["regist_" + rs_child.co_pagreg + "_color"]  = rs_child.ti_colreg;
-                objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg;
-                objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten;
-                objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel;
+                objReg["regist_" + rs_child.co_pagreg]             = rs_child.va_pagreg; // Valor del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_type"]   = rs_child.ti_pagreg; // Tipo de Dato
+                objReg["regist_" + rs_child.co_pagreg + "_est"]    = rs_child.ti_estreg; // Estado del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_color"]  = rs_child.ti_colreg; // Color del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg; // Icono
+                objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten; // Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel; // Datos del Combo
             };
     
             arrObj.push(objReg);
@@ -161,7 +162,8 @@ app.post('/propag', async (req, res) => {
             res.status(200).send({
                 mensaje: 'se proceso correctamente',
                 pages_to_refresh: x.pages_refresh,
-                page_params: x.page_params
+                page_params: x.page_params,
+                page_redirect: x.page_redirect
             });
         }).catch( resp =>{
             res.status(500).json({

@@ -60,7 +60,7 @@ app.post('/login', async (req, res) => {
             valid: false,
             query: query,
             error: e,
-            stack_err: e.stack
+            stack_err: e.stack 
         });
     };
 });
