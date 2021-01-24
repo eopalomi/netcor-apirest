@@ -159,25 +159,41 @@ app.post('/propag', async (req, res) => {
         eval(resultPropagJS.js_page);
         
         procesarPropag(body, params.id_pagina, params.id_boton).then( x => {
+            console.log("x", x);
+            let pageParams;
+            let pageRedirect;
+            let pageRefresh;
+            let msgAlert;
+
+            if (x !== undefined) {
+                pageParams   = x.page_params;
+                pageRedirect = x.page_redirect;
+                pageRefresh  = x.pages_refresh;
+                msgAlert     = x.msg_alert;
+            }
+
             res.status(200).send({
-                mensaje: 'se proceso correctamente',
-                pages_to_refresh: x.pages_refresh,
-                page_params: x.page_params,
-                page_redirect: x.page_redirect
+                valid: true,
+                pages_to_refresh: pageRefresh  || null,
+                page_params:      pageParams   || null,
+                page_redirect:    pageRedirect || null,
+                msg_alert:        msgAlert     || null
             });
-        }).catch( resp =>{
+        }).catch( err =>{
             res.status(500).json({
-                error: "ha ocurrido un error propag",
-                pagina: params.id_pagina,
-                stack: resp
+                valid: false,
+                error_stack: err.stack,
+                page_id: params.id_pagina
             });
         });
     } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
-            query_valpagjs: query_propagjs,
-            error: e,
-            stack_err: e.stack
+            error: true,
+            error_info: e,
+            error_stack: e.stack,
+            page_id: params.id_pagina,
+            context: 'query'
         });
     }
 });

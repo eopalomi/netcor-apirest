@@ -9,8 +9,7 @@ const pool = new Pool(config.pg_herokuapp);
 
 module.exports = {
     query: (text, params) => pool.query(text, params).catch(res =>{
-        console.log("error ejecutar query", res.stack);
-
-        return res;
+        //console.log("error ejecutar query", res);
+        throw new Error(res);
     })
-} 
+}
