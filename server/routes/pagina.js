@@ -189,11 +189,9 @@ app.post('/propag', async (req, res) => {
     } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
-            error: true,
-            error_info: e,
+            valid: false,
             error_stack: e.stack,
-            page_id: params.id_pagina,
-            context: 'query'
+            page_id: params.id_pagina
         });
     }
 });
