@@ -12,6 +12,18 @@ const pg_herokuapp = {
     }
 };
 
+const pg_sjserviapp = {
+    host: '95.111.235.214',
+    database: 'postgres',
+    port: '32772',
+    user: 'userpostgres',
+    password: 'passpostgres',
+    dialect: "postgres",
+    ssl: false
+};
+
+
 module.exports = {
-    pg_herokuapp
+    pg_herokuapp,
+    pg_sjserviapp
 };

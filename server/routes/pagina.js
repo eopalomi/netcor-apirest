@@ -41,7 +41,9 @@ app.get('/pagina', async (req, res) => {
         if (!resultPageInfo) {
             // Respuesta (Bad Request - 400)
             return res.status(400).json({
-                error: { message: 'No existe la pagina' }
+                valid: false,
+                error_stack: 'No existe la pagina',
+                page_id: params.id_pagina
             });
         };
         
@@ -85,18 +87,18 @@ app.get('/pagina', async (req, res) => {
                 res.status(200).json(resultPageInfo);
             }).catch( e =>{
                 res.status(500).json({
-                    msg: "ha ocurrido un error",
-                    error: e.stack
+                    valid: false,
+                    error_stack: e.stack,
+                    page_id: params.id_pagina
                 });
             });
         };
     } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
-            error: true,
-            query_valpag: query_valpag,
-            query_valpagjs: query_valpagjs,
-            error_detail: e.stack
+            valid: false,
+            error_stack: e.stack,
+            page_id: params.id_pagina
         });
     }
 
@@ -115,6 +117,7 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg; // Icono
                 objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten; // Contenedor
                 objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_link"]   = rs_child.va_urllin; // Datos del Combo
             };
     
             arrObj.push(objReg);
@@ -151,7 +154,9 @@ app.post('/propag', async (req, res) => {
         if (!resultPropagJS) {
             // Respuesta (Bad Request - 400)
             return res.status(400).json({
-                error: { message: 'No existe el Propag JS de la pagina' }
+                valid: false,
+                error_stack: 'No existe el Propag JS de la pagina',
+                page_id: params.id_pagina
             });
         };
  
@@ -168,7 +173,7 @@ app.post('/propag', async (req, res) => {
             if (x !== undefined) {
                 pageParams   = x.page_params;
                 pageRedirect = x.page_redirect;
-                pageRefresh  = x.pages_refresh;
+                pageRefresh  = x.refresh_pages;
                 msgAlert     = x.msg_alert;
             }
 
