@@ -23,8 +23,12 @@ app.get('/pagina', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log("Ejecutando /pagina (header, body, params):", header, body, params.params_page)
-
+    // Parametros para el procesarPropag
+    const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
+    const PAGEID = params.id_pagina;
+    let   RES_JS = {};
+    
+    
     // [querys] Informacion de la Pagina
     let query_valpag = `select * from frame.pagina_info(${params.id_pagina}, null)`;
 
@@ -70,15 +74,8 @@ app.get('/pagina', async (req, res) => {
             // Ejecutar JS Pagina y crear la funcion
             eval(resultPageJS.js_page);
             
-            // Validar si hay parametros y convertirlo en objeto
-            if (params.params_page !== undefined){
-                var objParams = JSON.parse(params.params_page);
-            } else {
-                var objParams = null;
-            };
-            
             // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
-            procesarValpag(objParams)
+            procesarValpag()
             .then(data_page => {
                 //Agregar los Registros de la pagina al Json de Data de la Pagina
                 resultPageInfo.data_page = data_page;
@@ -117,7 +114,8 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg; // Icono
                 objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten; // Contenedor
                 objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel; // Datos del Combo
-                objReg["regist_" + rs_child.co_pagreg + "_link"]   = rs_child.va_urllin; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_link"]   = rs_child.va_urllin; // Link de Redireccion
+                objReg["regist_" + rs_child.co_pagreg + "_pagref"] = rs_child.ar_pagref; // Datos del Combo
             };
     
             arrObj.push(objReg);
@@ -137,11 +135,15 @@ app.post('/propag', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log('propag query params', params);
-    console.log('propag body', body);
-
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.pagina_propag_js(${params.id_pagina}, null);`;
+
+    // Parametros para el procesarPropag
+    const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
+    const ALLREG = body;
+    const BUTTON = params.id_boton;
+    const PAGEID = params.id_pagina;
+    let   RES_JS = {};
 
     try {
         // Conectar y Ejecutar Query - Buscar JS de la Pagina
@@ -160,31 +162,18 @@ app.post('/propag', async (req, res) => {
             });
         };
  
-        // Ejecutar JS Pagina y crear la funcion
+        // Ejecutar JS Propag y crear la funcion
         eval(resultPropagJS.js_page);
         
-        procesarPropag(body, params.id_pagina, params.id_boton).then( x => {
-            console.log("x", x);
-            let pageParams;
-            let pageRedirect;
-            let pageRefresh;
-            let msgAlert;
+        procesarPropag().then( x => {
+            // Flag Rpta valida
+            RES_JS.valid = true;
 
-            if (x !== undefined) {
-                pageParams   = x.page_params;
-                pageRedirect = x.page_redirect;
-                pageRefresh  = x.refresh_pages;
-                msgAlert     = x.msg_alert;
-            }
+            //console.log("==============> RESPUESTA RES_JS:", RES_JS);
 
-            res.status(200).send({
-                valid: true,
-                pages_to_refresh: pageRefresh  || null,
-                page_params:      pageParams   || null,
-                page_redirect:    pageRedirect || null,
-                msg_alert:        msgAlert     || null
-            });
-        }).catch( err =>{
+            // Respuesta (HTTP 200 - OK)
+            res.status(200).send(RES_JS);
+        }).catch( err => {
             res.status(500).json({
                 valid: false,
                 error_stack: err.stack,
@@ -198,7 +187,38 @@ app.post('/propag', async (req, res) => {
             error_stack: e.stack,
             page_id: params.id_pagina
         });
-    }
+    };
+
+    // Funciones
+    function add_param(key_par, value_par){
+        if (RES_JS.page_params === undefined) {
+            RES_JS.page_params = {};
+        };
+
+        RES_JS.page_params[key_par] = value_par;
+    };
+
+    function add_page_refresh(page_refresh){
+        RES_JS.pages_to_refresh = page_refresh;
+    };
+
+    function add_redirect(conten_redirect){
+        RES_JS.page_redirect = conten_redirect;
+    };
+
+    function add_close_dialog(dialog_close){
+        RES_JS.close_dialog = dialog_close;
+    };
+
+    function add_msg_alert(msg_title, msg_body, msg_type){
+        if (RES_JS.msg_alert === undefined) {
+            RES_JS.msg_alert = {};
+        };
+
+        RES_JS.msg_alert.msg_title = msg_title;
+        RES_JS.msg_alert.msg_body = msg_body;
+        RES_JS.msg_alert.msg_type = msg_type;
+    };
 });
 
 app.post('/pagina-propag', async (req, res) => {
