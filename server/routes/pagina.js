@@ -28,6 +28,10 @@ app.get('/pagina', async (req, res) => {
     const PAGEID = params.id_pagina;
     let   RES_JS = {};
     
+    // console.log("params propag: ", params)
+    // console.log("ES UNDEFINED: ", params.params_page === undefined)
+    // console.log("ES UNDEFINED: ", params.params_page)
+    // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
     
     // [querys] Informacion de la Pagina
     let query_valpag = `select * from frame.pagina_info(${params.id_pagina}, null)`;
@@ -46,7 +50,7 @@ app.get('/pagina', async (req, res) => {
             // Respuesta (Bad Request - 400)
             return res.status(400).json({
                 valid: false,
-                error_stack: 'No existe la pagina',
+                error_stack: 'No existe la pagina', 
                 page_id: params.id_pagina
             });
         };
@@ -116,6 +120,8 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel; // Datos del Combo
                 objReg["regist_" + rs_child.co_pagreg + "_link"]   = rs_child.va_urllin; // Link de Redireccion
                 objReg["regist_" + rs_child.co_pagreg + "_pagref"] = rs_child.ar_pagref; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_plhold"] = rs_child.va_plhold; // PlaceHolder
+                objReg["regist_" + rs_child.co_pagreg + "_dialog"] = rs_child.va_dialog; // Dialog Contenedor
             };
     
             arrObj.push(objReg);
@@ -134,12 +140,15 @@ app.post('/propag', async (req, res) => {
 
     // HTTP Query Params
     let params = req.query;
+    // console.log("params propag: ", params)
+    // console.log("ES UNDEFINED: ", params.params_page === undefined)
+    // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
 
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.pagina_propag_js(${params.id_pagina}, null);`;
 
     // Parametros para el procesarPropag
-    const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
+    const PARAMS = params.params_page === undefined ? {hola:1} : JSON.parse(params.params_page);
     const ALLREG = body;
     const BUTTON = params.id_boton;
     const PAGEID = params.id_pagina;
