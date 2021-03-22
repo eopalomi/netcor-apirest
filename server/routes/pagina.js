@@ -1,6 +1,9 @@
 // Importamos Express
 const express = require('express');
 
+// Usar Peticiones HTTP
+const fetch = require('node-fetch');
+
 // Importamos Acceso BD
 const db = require('../db/connect_db');
 
@@ -27,11 +30,6 @@ app.get('/pagina', async (req, res) => {
     const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
     const PAGEID = params.id_pagina;
     let   RES_JS = {};
-    
-    // console.log("params propag: ", params)
-    // console.log("ES UNDEFINED: ", params.params_page === undefined)
-    // console.log("ES UNDEFINED: ", params.params_page)
-    // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
     
     // [querys] Informacion de la Pagina
     let query_valpag = `select * from frame.pagina_info(${params.id_pagina}, null)`;
@@ -74,7 +72,6 @@ app.get('/pagina', async (req, res) => {
             // Respuesta (OK - 200)
             res.status(200).json(resultPageInfo);
         } else {
-            
             // Ejecutar JS Pagina y crear la funcion
             eval(resultPageJS.js_page);
             
@@ -122,6 +119,8 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_pagref"] = rs_child.ar_pagref; // Datos del Combo
                 objReg["regist_" + rs_child.co_pagreg + "_plhold"] = rs_child.va_plhold; // PlaceHolder
                 objReg["regist_" + rs_child.co_pagreg + "_dialog"] = rs_child.va_dialog; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_sizreg"] = rs_child.va_sizreg; // Tamaño Letra del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_filter"] = rs_child.va_filter; // Filtro del Registro
             };
     
             arrObj.push(objReg);
@@ -129,6 +128,15 @@ app.get('/pagina', async (req, res) => {
     
         return arrObj;
     };
+
+    async function HTTP(url, method, body){
+        let bodyJson = JSON.stringify(body);
+        let contenType = {"Content-type": "application/json"};
+
+        let response = fetch(url, {method: method, body: bodyJson, headers: contenType});
+        
+        return response;
+    }
 });
 
 app.post('/propag', async (req, res) => {
@@ -140,7 +148,7 @@ app.post('/propag', async (req, res) => {
 
     // HTTP Query Params
     let params = req.query;
-    // console.log("params propag: ", params)
+    console.log("body propag: ", req.body)
     // console.log("ES UNDEFINED: ", params.params_page === undefined)
     // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
 
@@ -148,7 +156,7 @@ app.post('/propag', async (req, res) => {
     let query_propagjs = `select * from frame.pagina_propag_js(${params.id_pagina}, null);`;
 
     // Parametros para el procesarPropag
-    const PARAMS = params.params_page === undefined ? {hola:1} : JSON.parse(params.params_page);
+    const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
     const ALLREG = body;
     const BUTTON = params.id_boton;
     const PAGEID = params.id_pagina;
@@ -228,6 +236,15 @@ app.post('/propag', async (req, res) => {
         RES_JS.msg_alert.msg_body = msg_body;
         RES_JS.msg_alert.msg_type = msg_type;
     };
+
+    async function HTTP(url, method, body){
+        let bodyJson = JSON.stringify(body);
+        let contenType = {"Content-type": "application/json"};
+
+        let response = fetch(url, {method: method, body: bodyJson, headers: contenType});
+
+        return response;
+    }
 });
 
 app.post('/pagina-propag', async (req, res) => {
@@ -400,6 +417,45 @@ app.get('/pagina-valpag', async (req, res) => {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
             query_valpagjs: query_propagjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.get('/pagina/search', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    // query
+    let query = `select * from frame.pagina_search(${params.tipo_busqueda} , '${params.dato_busqueda}', null)`;
+    
+    try {
+        // Conectar y Ejecutar Query
+        const queryResult = await db.query(query);
+        const dataResult = queryResult.rows;
+        
+        // No Existe Data?
+        if (!dataResult) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                error: { message: 'No Existe la pagina' }
+            });
+        };
+
+        // Respuesta (OK - 200)
+        res.status(200).json(dataResult);
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            valid: false,
+            query: query,
             error: e,
             stack_err: e.stack
         });
