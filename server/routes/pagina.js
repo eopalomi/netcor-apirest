@@ -270,11 +270,11 @@ app.post('/pagina-propag', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log('query params', params);
-    console.log('en el body', body);
+    // console.log('query params', params);
+    // console.log('en el body', body);
 
     // [querys] Informacion del JS con el Propag de la Pagina
-    let query_propagjs = `select * from frame.set_pagina_propag(${params.id_pagina}, '${params.js_propag.split("'").join("''")}');`;
+    let query_propagjs = `select * from frame.set_pagina_propag(${body.id_pagina}, '${body.js_propag.split("'").join("''")}');`;
 
     try {
         // Conectar y Ejecutar Query - Buscar JS de la Pagina
@@ -357,15 +357,16 @@ app.post('/pagina-valpag', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log('pagina-valpag(post)');
-    console.log('query params', params);
-    console.log('en el body', body);
-
+    //console.log('pagina-valpag(post)');
+    //console.log('query params', params);
+    //console.log('en el body', body);
+    // console.log('query_propagjs', body.id_pagina);
+    // console.log('body aquiii', body.js_valpag);
+    
     // [querys] Informacion del JS con el Propag de la Pagina
-    let query_propagjs = `select * from frame.set_pagina_valpag(${params.id_pagina},'${params.js_valpag.split("'").join("''")}');`;
-    console.log('query_propagjs', query_propagjs);
-
-    /*try {*/
+    let query_propagjs = `select * from frame.set_pagina_valpag(${body.id_pagina},'${body.js_valpag.split("'").join("''")}');`;
+    
+    try {
         // Conectar y Ejecutar Query - Buscar JS de la Pagina
         const execPageJS = await db.query(query_propagjs);
 
@@ -382,14 +383,14 @@ app.post('/pagina-valpag', async (req, res) => {
  
         res.status(200).send({mensaje: 'se proceso correctamente el valpag'});
 
-    /*} catch (e) {
+    } catch (e) {
         // Respuesta (Internal Sever Error - 500)
         return res.status(500).json({
             query_valpagjs: query_propagjs,
             error: e,
             stack_err: e.stack
         });
-    }*/
+    }
 });
 
 app.get('/pagina-valpag', async (req, res) => {
