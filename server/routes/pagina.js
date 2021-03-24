@@ -80,6 +80,9 @@ app.get('/pagina', async (req, res) => {
             .then(data_page => {
                 //Agregar los Registros de la pagina al Json de Data de la Pagina
                 resultPageInfo.data_page = data_page;
+                
+                // Agregar Mensajes de Alerta
+                if (RES_JS.msg_alert) resultPageInfo.msg_alert = RES_JS.msg_alert;
 
                 // Respuesta (OK - 200)
                 res.status(200).json(resultPageInfo);
@@ -137,6 +140,16 @@ app.get('/pagina', async (req, res) => {
         
         return response;
     }
+
+    function add_msg_alert(msg_title, msg_body, msg_type){
+        if (RES_JS.msg_alert === undefined) {
+            RES_JS.msg_alert = {};
+        };
+
+        RES_JS.msg_alert.msg_title = msg_title;
+        RES_JS.msg_alert.msg_body = msg_body;
+        RES_JS.msg_alert.msg_type = msg_type;
+    };
 });
 
 app.post('/propag', async (req, res) => {
