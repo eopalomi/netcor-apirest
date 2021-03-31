@@ -240,6 +240,15 @@ app.post('/propag', async (req, res) => {
         RES_JS.close_dialog = dialog_close;
     };
 
+    function add_open_dialog(conten_open, min_vw){
+        if (RES_JS.open_dialog === undefined) {
+            RES_JS.open_dialog = {};
+        };
+
+        RES_JS.open_dialog.conten = conten_open;
+        RES_JS.open_dialog.min_vw = min_vw;
+    };
+
     function add_msg_alert(msg_title, msg_body, msg_type){
         if (RES_JS.msg_alert === undefined) {
             RES_JS.msg_alert = {};
