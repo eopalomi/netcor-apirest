@@ -122,6 +122,7 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_pagref"] = rs_child.ar_pagref; // Datos del Combo
                 objReg["regist_" + rs_child.co_pagreg + "_plhold"] = rs_child.va_plhold; // PlaceHolder
                 objReg["regist_" + rs_child.co_pagreg + "_dialog"] = rs_child.va_dialog; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_dialvw"] = rs_child.va_dialvw; // Dialog Contenedor
                 objReg["regist_" + rs_child.co_pagreg + "_sizreg"] = rs_child.va_sizreg; // Tamaño Letra del Registro
                 objReg["regist_" + rs_child.co_pagreg + "_filter"] = rs_child.va_filter; // Filtro del Registro
             };
