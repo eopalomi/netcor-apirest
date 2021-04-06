@@ -110,21 +110,22 @@ app.get('/pagina', async (req, res) => {
         for (let rs_parent of rowData) {
             const objReg = new Object();
     
-            for (let rs_child of rs_parent) {
-                objReg["regist_" + rs_child.co_pagreg]             = rs_child.va_pagreg; // Valor del Registro
-                objReg["regist_" + rs_child.co_pagreg + "_type"]   = rs_child.ti_pagreg; // Tipo de Dato
-                objReg["regist_" + rs_child.co_pagreg + "_est"]    = rs_child.ti_estreg; // Estado del Registro
-                objReg["regist_" + rs_child.co_pagreg + "_color"]  = rs_child.ti_colreg; // Color del Registro
-                objReg["regist_" + rs_child.co_pagreg + "_ico"]    = rs_child.va_icoreg; // Icono
-                objReg["regist_" + rs_child.co_pagreg + "_conten"] = rs_child.id_conten; // Contenedor
-                objReg["regist_" + rs_child.co_pagreg + "_datsel"] = rs_child.ar_datsel; // Datos del Combo
-                objReg["regist_" + rs_child.co_pagreg + "_link"]   = rs_child.va_urllin; // Link de Redireccion
-                objReg["regist_" + rs_child.co_pagreg + "_pagref"] = rs_child.ar_pagref; // Datos del Combo
-                objReg["regist_" + rs_child.co_pagreg + "_plhold"] = rs_child.va_plhold; // PlaceHolder
-                objReg["regist_" + rs_child.co_pagreg + "_dialog"] = rs_child.va_dialog; // Dialog Contenedor
-                objReg["regist_" + rs_child.co_pagreg + "_dialvw"] = rs_child.va_dialvw; // Dialog Contenedor
-                objReg["regist_" + rs_child.co_pagreg + "_sizreg"] = rs_child.va_sizreg; // Tamaño Letra del Registro
-                objReg["regist_" + rs_child.co_pagreg + "_filter"] = rs_child.va_filter; // Filtro del Registro
+            for (let rs_child of rs_parent) {  
+                objReg["regist_" + rs_child.co_pagreg]               = rs_child.va_pagreg; // Valor del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_type"]     = rs_child.ti_pagreg; // Tipo de Dato
+                objReg["regist_" + rs_child.co_pagreg + "_est"]      = rs_child.ti_estreg; // Estado del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_color"]    = rs_child.ti_colreg; // Color del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_ico"]      = rs_child.va_icoreg; // Icono
+                objReg["regist_" + rs_child.co_pagreg + "_conten"]   = rs_child.id_conten; // Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_datsel"]   = rs_child.ar_datsel; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_link"]     = rs_child.va_urllin; // Link de Redireccion
+                objReg["regist_" + rs_child.co_pagreg + "_pagref"]   = rs_child.ar_pagref; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_plhold"]   = rs_child.va_plhold; // PlaceHolder
+                objReg["regist_" + rs_child.co_pagreg + "_dialog"]   = rs_child.va_dialog; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_dialvw"]   = rs_child.va_dialvw; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_sizreg"]   = rs_child.va_sizreg; // Tamaño Letra del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_filter"]   = rs_child.va_filter; // Filtro del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_required"] = rs_child.il_requir; // Validacion Requerida
             };
     
             arrObj.push(objReg);
