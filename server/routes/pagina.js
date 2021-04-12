@@ -126,6 +126,8 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_sizreg"]   = rs_child.va_sizreg; // Tamaño Letra del Registro
                 objReg["regist_" + rs_child.co_pagreg + "_filter"]   = rs_child.va_filter; // Filtro del Registro
                 objReg["regist_" + rs_child.co_pagreg + "_required"] = rs_child.il_requir; // Validacion Requerida
+                objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
+                objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
             };
     
             arrObj.push(objReg);
@@ -152,6 +154,14 @@ app.get('/pagina', async (req, res) => {
         RES_JS.msg_alert.msg_body = msg_body;
         RES_JS.msg_alert.msg_type = msg_type;
     };
+
+    function remove_param(key_par){
+        if (RES_JS.remove_params === undefined) {
+            RES_JS.remove_params = [];
+        };
+
+        RES_JS.remove_params.push(key_par);
+    };
 });
 
 app.post('/propag', async (req, res) => {
@@ -163,7 +173,7 @@ app.post('/propag', async (req, res) => {
 
     // HTTP Query Params
     let params = req.query;
-    console.log("body propag: ", req.body)
+    // console.log("body propag: ", req.body)
     // console.log("ES UNDEFINED: ", params.params_page === undefined)
     // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
 
@@ -228,6 +238,14 @@ app.post('/propag', async (req, res) => {
         };
 
         RES_JS.page_params[key_par] = value_par;
+    };
+
+    function remove_param(key_par){
+        if (RES_JS.remove_params === undefined) {
+            RES_JS.remove_params = [];
+        };
+
+        RES_JS.remove_params.push(key_par);
     };
 
     function add_page_refresh(page_refresh){
@@ -323,8 +341,8 @@ app.get('/pagina-propag', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log('query params', params);
-    console.log('en el body', body);
+    // console.log('query params', params);
+    // console.log('en el body', body);
 
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.get_pagina_propag(${params.id_pagina});`;
@@ -414,8 +432,8 @@ app.get('/pagina-valpag', async (req, res) => {
     // HTTP Query Params
     let params = req.query;
 
-    console.log('query params', params);
-    console.log('en el body', body);
+    // console.log('query params', params);
+    // console.log('en el body', body);
 
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.get_pagina_valpag(${params.id_pagina});`;
