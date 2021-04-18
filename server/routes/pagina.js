@@ -29,6 +29,7 @@ app.get('/pagina', async (req, res) => {
     // Parametros para el procesarPropag
     const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
     const PAGEID = params.id_pagina;
+    const USUARI = {cod_usu:params.usu_cod};
     let   RES_JS = {};
     
     // [querys] Informacion de la Pagina
@@ -185,6 +186,7 @@ app.post('/propag', async (req, res) => {
     const ALLREG = body;
     const BUTTON = params.id_boton;
     const PAGEID = params.id_pagina;
+    const USUARI = {cod_usu:params.usu_cod};
     let   RES_JS = {};
 
     try {
