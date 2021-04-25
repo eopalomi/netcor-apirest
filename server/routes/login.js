@@ -30,7 +30,7 @@ app.post('/login', async (req, res) => {
         // Conectar y Ejecutar Query
         const queryResult = await db.connect('sjservi', query);
         const dataLogin = queryResult.rows[0];
-
+        console.log("Auth queryResult:", queryResult)
         // Usuario Existe?
         if (!dataLogin.usuario) {
             // Respuesta (Bad Request - 400)
