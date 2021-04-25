@@ -22,9 +22,10 @@ app.post('/login', async (req, res) => {
     // HTTP Body
     let body = req.body;
 
-    // Query 
-    let query = `select * from auth_usuari('${JSON.stringify(body)}')`;
-
+    // Query
+    
+    let query = `select * from public.auth_usuari('${JSON.stringify(body)}')`;
+    console.log("Auth query:", query)
     try {
         // Conectar y Ejecutar Query
         const queryResult = await db.connect('sjservi', query);

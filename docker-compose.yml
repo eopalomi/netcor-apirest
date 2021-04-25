@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  node_rest:
+    container_name: netcor_apirest
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - netcor_app
+networks:
+  netcor_app:
+      external:  true
