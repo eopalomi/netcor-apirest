@@ -43,7 +43,7 @@
 // };
 
 const pg_herokuapp = {
-    host: '172.17.0.2',
+    host: '172.18.0.2',
     database: 'frame_app',
     port: '5432',
     user: 'postgres',
@@ -53,7 +53,7 @@ const pg_herokuapp = {
 };
 
 const pg_sjserviapp = {
-    host: '172.17.0.2',
+    host: '172.18.0.2',
     database: 'sjservi',
     port: '5432',
     user: 'postgres',
