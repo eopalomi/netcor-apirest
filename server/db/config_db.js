@@ -45,7 +45,7 @@
 const pg_herokuapp = {
     host: '172.20.0.2',
     database: 'frame_app',
-    port: '5439',
+    port: '5432',
     user: 'postgres',
     password: 'acceso123',
     dialect: "postgres",
@@ -55,7 +55,7 @@ const pg_herokuapp = {
 const pg_sjserviapp = {
     host: '172.20.0.2',
     database: 'sjservi',
-    port: '5439',
+    port: '5432',
     user: 'postgres',
     password: 'acceso123',
     dialect: "postgres",
