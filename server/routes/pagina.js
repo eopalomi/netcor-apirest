@@ -39,6 +39,7 @@ app.get('/pagina', async (req, res) => {
     let query_valpagjs = `select * from frame.pagina_js(${params.id_pagina}, null);`;
     
     try {
+        // console.log("entro aqui 001", query_valpag);
         // Conectar y Ejecutar Query - Buscar Pagina
         const execPageInf = await db.query(query_valpag);
         
@@ -53,7 +54,7 @@ app.get('/pagina', async (req, res) => {
                 page_id: params.id_pagina
             });
         };
-        
+            
         // Conectar y Ejecutar Query - Buscar JS de la Pagina
         const execPageJS = await db.query(query_valpagjs);
         const resultPageJS = execPageJS.rows[0];
@@ -129,6 +130,7 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_required"] = rs_child.il_requir; // Validacion Requerida
                 objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
                 objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
+                objReg["dash_card"]                                  = rs_child.dash_card; // Configuracion de Card
             };
     
             arrObj.push(objReg);
