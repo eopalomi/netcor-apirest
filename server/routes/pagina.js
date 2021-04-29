@@ -130,6 +130,7 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_required"] = rs_child.il_requir; // Validacion Requerida
                 objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
                 objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
+                objReg["regist_" + rs_child.co_pagreg + "_disabled"] = rs_child.il_disabl; // Campo Desahabilitado
                 objReg["dash_card"]                                  = rs_child.dash_card; // Configuracion de Card
             };
     
