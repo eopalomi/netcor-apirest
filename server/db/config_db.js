@@ -44,7 +44,7 @@ const pg_sjserviapp = {
 // };
 
 
-// // LOCALHOST
+// LOCALHOST
 // const pg_herokuapp = {
 //     host: 'localhost',
 //     database: 'frame',

@@ -74,8 +74,11 @@ app.get('/pagina', async (req, res) => {
             // Respuesta (OK - 200)
             res.status(200).json(resultPageInfo);
         } else {
+            // Funcion de Carga
+            let asyncLoadFuntion = `async function procesarValpag() { ${resultPageJS.js_page} }`
+
             // Ejecutar JS Pagina y crear la funcion
-            eval(resultPageJS.js_page);
+            eval(asyncLoadFuntion);
             
             // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
             procesarValpag()
@@ -208,9 +211,12 @@ app.post('/propag', async (req, res) => {
                 page_id: params.id_pagina
             });
         };
- 
+
+        // Crear Funcion
+        let asyncProcesFunction = `async function procesarPropag() { ${resultPropagJS.js_page} }`
+
         // Ejecutar JS Propag y crear la funcion
-        eval(resultPropagJS.js_page);
+        eval(asyncProcesFunction);
         
         procesarPropag().then( x => {
             // Flag Rpta valida
