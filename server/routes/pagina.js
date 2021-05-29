@@ -75,7 +75,7 @@ app.get('/pagina', async (req, res) => {
             res.status(200).json(resultPageInfo);
         } else {
             // Funcion de Carga
-            let asyncLoadFuntion = `async function procesarValpag() { ${resultPageJS.js_page} }`
+            let asyncLoadFuntion = `async function procesarValpag() {\n ${resultPageJS.js_page} \n}`
 
             // Ejecutar JS Pagina y crear la funcion
             eval(asyncLoadFuntion);
@@ -213,7 +213,7 @@ app.post('/propag', async (req, res) => {
         };
 
         // Crear Funcion
-        let asyncProcesFunction = `async function procesarPropag() { ${resultPropagJS.js_page} }`
+        let asyncProcesFunction = `async function procesarPropag() { \n ${resultPropagJS.js_page} \n }`
 
         // Ejecutar JS Propag y crear la funcion
         eval(asyncProcesFunction);
