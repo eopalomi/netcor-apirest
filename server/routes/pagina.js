@@ -136,6 +136,8 @@ app.get('/pagina', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
                 objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
                 objReg["regist_" + rs_child.co_pagreg + "_disabled"] = rs_child.il_disabl; // Campo Desahabilitado
+                objReg["regist_" + rs_child.co_pagreg + "_propos"]   = rs_child.il_propos; // Procesar Pos Pagina
+                objReg["regist_" + rs_child.co_pagreg + "_actreg"]   = rs_child.il_actreg; // Actualizar Registro
                 objReg["dash_card"]                                  = rs_child.dash_card; // Configuracion de Card
             };
     
@@ -310,6 +312,8 @@ app.get('/propos', async (req, res) => {
     // Parametros para el procesarPropag
     const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
     const PAGEID = params.id_pagina;
+    const REGVAL = params.regist_value;
+    const REGID  = params.regist_number;
     const USUARI = {cod_usu:params.usu_cod};
     let   RES_JS = {};
 
@@ -344,7 +348,8 @@ app.get('/propos', async (req, res) => {
                 resultPageInfo.data_page = data_page;
                 
                 // Agregar Mensajes de Alerta
-                if (RES_JS.msg_alert) resultPageInfo.msg_alert = RES_JS.msg_alert;
+                if (RES_JS.msg_alert)         resultPageInfo.msg_alert = RES_JS.msg_alert;
+                if (RES_JS.regist_to_refresh) resultPageInfo.regist_to_refresh = RES_JS.regist_to_refresh;
 
                 // Respuesta (OK - 200)
                 res.status(200).json(resultPageInfo);
@@ -391,6 +396,8 @@ app.get('/propos', async (req, res) => {
                 objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
                 objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
                 objReg["regist_" + rs_child.co_pagreg + "_disabled"] = rs_child.il_disabl; // Campo Desahabilitado
+                objReg["regist_" + rs_child.co_pagreg + "_propos"]   = rs_child.il_propos; // Procesar Pos Pagina
+                objReg["regist_" + rs_child.co_pagreg + "_actreg"]   = rs_child.il_actreg; // Actualizar Registro
                 objReg["dash_card"]                                  = rs_child.dash_card; // Configuracion de Card
             };
     
@@ -425,6 +432,10 @@ app.get('/propos', async (req, res) => {
         };
 
         RES_JS.remove_params.push(key_par);
+    };
+
+    function add_regist_refresh(regist_refresh){
+        RES_JS.regist_to_refresh = regist_refresh;
     };
 });
 
