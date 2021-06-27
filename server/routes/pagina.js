@@ -13,6 +13,8 @@ const { validaToken } = require('../middlewares/autenticacion');
 // Usamos Express
 const app = express();
 
+
+
 // ======== ENDPOINTS =========
 // ============================
 
@@ -180,9 +182,6 @@ app.post('/propag', async (req, res) => {
 
     // HTTP Query Params
     let params = req.query;
-    // console.log("body propag: ", req.body)
-    // console.log("ES UNDEFINED: ", params.params_page === undefined)
-    // console.log("PARSEO PARAMETROS: ", JSON.parse(params.params_page))
 
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.pagina_propag_js(${params.id_pagina}, null);`;
@@ -221,8 +220,6 @@ app.post('/propag', async (req, res) => {
         procesarPropag().then( x => {
             // Flag Rpta valida
             RES_JS.valid = true;
-
-            //console.log("==============> RESPUESTA RES_JS:", RES_JS);
 
             // Respuesta (HTTP 200 - OK)
             res.status(200).send(RES_JS);
@@ -299,6 +296,226 @@ app.post('/propag', async (req, res) => {
         return response;
     }
 });
+
+app.get('/propos', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    // Parametros para el procesarPropag
+    const PARAMS = params.params_page === undefined ? {} : JSON.parse(params.params_page);
+    const PAGEID = params.id_pagina;
+    const USUARI = {cod_usu:params.usu_cod};
+    let   RES_JS = {};
+
+    // [querys] Informacion del JS con el valpag de la Pagina
+    let query_valpagjs = `select * from frame.pagina_propos_js(${params.id_pagina}, null);`;
+    
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_valpagjs);
+        const resultPageJS = execPageJS.rows[0];
+        let   resultPageInfo = {};
+        
+        // No Existe JS Post de la Pagina?
+        if (!resultPageJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                valid: false,
+                error_stack: 'No existe el post de la pagina', 
+                page_id: params.id_pagina
+            });
+        } else {
+            // Funcion de Carga
+            let asyncLoadFuntion = `async function procesarPospag() {\n ${resultPageJS.js_propos} \n}`
+
+            // Ejecutar JS Pagina y crear la funcion
+            eval(asyncLoadFuntion);
+            
+            // Ejecutar la funcion obtenida desde la base de datos y responder con los datos
+            procesarPospag()
+            .then(data_page => {
+                //Agregar los Registros de la pagina al Json de Data de la Pagina
+                resultPageInfo.data_page = data_page;
+                
+                // Agregar Mensajes de Alerta
+                if (RES_JS.msg_alert) resultPageInfo.msg_alert = RES_JS.msg_alert;
+
+                // Respuesta (OK - 200)
+                res.status(200).json(resultPageInfo);
+            }).catch( e =>{
+                res.status(500).json({
+                    valid: false,
+                    error_stack: e.stack,
+                    page_id: params.id_pagina
+                });
+            });
+        };
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            valid: false,
+            error_stack: e.stack,
+            page_id: params.id_pagina
+        });
+    }
+
+    // Funciones
+    function valpagReturn(rowData){
+        let arrObj = [];
+    
+        for (let rs_parent of rowData) {
+            const objReg = new Object();
+    
+            for (let rs_child of rs_parent) {  
+                objReg["regist_" + rs_child.co_pagreg]               = rs_child.va_pagreg; // Valor del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_type"]     = rs_child.ti_pagreg; // Tipo de Dato
+                objReg["regist_" + rs_child.co_pagreg + "_est"]      = rs_child.ti_estreg; // Estado del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_color"]    = rs_child.ti_colreg; // Color del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_ico"]      = rs_child.va_icoreg; // Icono
+                objReg["regist_" + rs_child.co_pagreg + "_conten"]   = rs_child.id_conten; // Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_datsel"]   = rs_child.ar_datsel; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_link"]     = rs_child.va_urllin; // Link de Redireccion
+                objReg["regist_" + rs_child.co_pagreg + "_pagref"]   = rs_child.ar_pagref; // Datos del Combo
+                objReg["regist_" + rs_child.co_pagreg + "_plhold"]   = rs_child.va_plhold; // PlaceHolder
+                objReg["regist_" + rs_child.co_pagreg + "_dialog"]   = rs_child.va_dialog; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_dialvw"]   = rs_child.va_dialvw; // Dialog Contenedor
+                objReg["regist_" + rs_child.co_pagreg + "_sizreg"]   = rs_child.va_sizreg; // Tamaño Letra del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_filter"]   = rs_child.va_filter; // Filtro del Registro
+                objReg["regist_" + rs_child.co_pagreg + "_required"] = rs_child.il_requir; // Validacion Requerida
+                objReg["regist_" + rs_child.co_pagreg + "_tooltip"]  = rs_child.va_tooltp; // Tooltip
+                objReg["regist_" + rs_child.co_pagreg + "_parname"]  = rs_child.no_params; // Nombre de Parametro
+                objReg["regist_" + rs_child.co_pagreg + "_disabled"] = rs_child.il_disabl; // Campo Desahabilitado
+                objReg["dash_card"]                                  = rs_child.dash_card; // Configuracion de Card
+            };
+    
+            arrObj.push(objReg);
+        };
+    
+        return arrObj;
+    };
+
+    async function HTTP(url, method, body){
+        let bodyJson = JSON.stringify(body);
+        let contenType = {"Content-type": "application/json"};
+
+        let response = fetch(url, {method: method, body: bodyJson, headers: contenType});
+        
+        return response;
+    }
+
+    function add_msg_alert(msg_title, msg_body, msg_type){
+        if (RES_JS.msg_alert === undefined) {
+            RES_JS.msg_alert = {};
+        };
+
+        RES_JS.msg_alert.msg_title = msg_title;
+        RES_JS.msg_alert.msg_body = msg_body;
+        RES_JS.msg_alert.msg_type = msg_type;
+    };
+
+    function remove_param(key_par){
+        if (RES_JS.remove_params === undefined) {
+            RES_JS.remove_params = [];
+        };
+
+        RES_JS.remove_params.push(key_par);
+    };
+});
+
+
+
+app.post('/pagina-propos', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_proposjs = `select * from frame.set_pagina_propos(${body.id_pagina}, '${body.js_propos.split("'").join("''")}');`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_proposjs);
+
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Bad Request - 400)
+            return res.status(400).json({
+                error: { message: 'No se pudo actualizar el post de la pagina' }
+            });
+        };
+ 
+        res.status(200).send({mensaje: 'se proceso correctamente el post'});
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_proposjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+app.get('/pagina-propos', async (req, res) => {
+    // HTTP Header
+    let header = req.headers;
+
+    // HTTP Body
+    let body = req.body;
+
+    // HTTP Query Params
+    let params = req.query;
+
+    // console.log('query params', params);
+    // console.log('en el body', body);
+
+    // [querys] Informacion del JS con el Propag de la Pagina
+    let query_proposjs = `select * from frame.get_pagina_propos(${params.id_pagina});`;
+
+    try {
+        // Conectar y Ejecutar Query - Buscar JS de la Pagina
+        const execPageJS = await db.query(query_proposjs);
+
+        // Obtiene el Resultado del Propag
+        const resultPropagJS = execPageJS.rows[0];
+
+        // No Existe Propag?
+        if (!resultPropagJS) {
+            // Respuesta (Ok - 400)
+            return res.status(200).json({
+                propos: ''
+            });
+        };
+ 
+        res.status(200).json({
+            propos: resultPropagJS.propos
+        });
+
+    } catch (e) {
+        // Respuesta (Internal Sever Error - 500)
+        return res.status(500).json({
+            query_valpagjs: query_proposjs,
+            error: e,
+            stack_err: e.stack
+        });
+    }
+});
+
+
+
 
 app.post('/pagina-propag', async (req, res) => {
     // HTTP Header
