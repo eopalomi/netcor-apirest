@@ -24,11 +24,11 @@ app.post('/login', async (req, res) => {
 
     // Query
     
-    let query = `select * from public.auth_usuari('${JSON.stringify(body)}')`;
+    let query = `select * from usuari.auth_usuari('${JSON.stringify(body)}')`;
     console.log("Auth query:", query)
     try {
         // Conectar y Ejecutar Query
-        const queryResult = await db.connect('sjservi', query);
+        const queryResult = await db.query(query);
         const dataLogin = queryResult.rows[0];
         console.log("Auth queryResult:", queryResult)
         // Usuario Existe?
