@@ -6,7 +6,8 @@ const config = require('./config_db');
 
 // Creamos un Pool de Conexion
 const pool = new Pool(config.pg_herokuapp);
-const pool_sjservi = new Pool(config.pg_sjserviapp);
+//const pool_sjservi = new Pool(config.pg_sjserviapp);
+const pool_sjservi = new Pool(config.pg_herokuapp);
 
 module.exports = {
     query: (text, params) => pool.query(text, params).catch(res =>{
