@@ -22,12 +22,12 @@ const app = express();
 //     console.log("ejecutando rutas");
 //     // query
 //     let query = `select * from routes.routes_list(null, null)`;
-    
+
 //     try {
 //         // Conectar y Ejecutar Query
 //         const queryResult = await db.query(query);
 //         const dataResult = queryResult.rows[0];
-        
+
 //         // No Existe Data?
 //         if (!dataResult) {
 //             // Respuesta (Bad Request - 400)
@@ -56,17 +56,21 @@ app.get('/routes', async (req, res) => {
     // HTTP Body
     let body = req.body;
 
-    let params = req.query;
-
-    console.log("params", params)
-    // query
-    let query = `select * from routes.routes_list('${params.usu_cod}', null)`;
+    let { usu_cod, system_cod } = req.query;
     
+    let params = {
+        codSubSystem: system_cod,
+        usu_cod: usu_cod
+    }
+    
+    // query
+    let query = `select * from routes.routes_list('${usu_cod}', '${JSON.stringify(params)}')`;
+    console.log("query:", query);
     try {
         // Conectar y Ejecutar Query
         const queryResult = await db.query(query);
         const dataResult = queryResult.rows[0];
-        
+
         // No Existe Data?
         if (!dataResult) {
             // Respuesta (Bad Request - 400)

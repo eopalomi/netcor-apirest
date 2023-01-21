@@ -1,23 +1,24 @@
 // Heroku App Conexion DB
 const pg_herokuapp = {
-    host: 'ec2-3-209-44-49.compute-1.amazonaws.com',
-    database: 'da45fgelf1rq0a',
-    port: '5432',
-    user: 'uhfxqfrwdobcef',
-    password: '6c5e1e478a93f80fecd5ed034dd07dbe54bc3ee2e125c48a9c9dde2575973c1a',
+    host: '165.227.68.255',
+    database: 'frame',
+    port: '5438',
+    user: 'root',
+    password: 'root',
     dialect: "postgres",
-    ssl: {
-        require: true,
-        rejectUnauthorized: false
-    }
+    ssl: false
+    // ssl: {
+    //     require: true,
+    //     rejectUnauthorized: false
+    // }
 };
 
 const pg_sjserviapp = {
-    host: '95.111.235.214',
-    database: 'postgres',
-    port: '32772',
-    user: 'userpostgres',
-    password: 'passpostgres',
+    host: '165.227.68.255',
+    database: 'frame',
+    port: '5438',
+    user: 'root',
+    password: 'root',
     dialect: "postgres",
     ssl: false
 };

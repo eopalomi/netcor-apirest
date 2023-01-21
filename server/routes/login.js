@@ -30,7 +30,7 @@ app.post('/login', async (req, res) => {
         // Conectar y Ejecutar Query
         const queryResult = await db.query(query);
         const dataLogin = queryResult.rows[0];
-        console.log("Auth queryResult:", queryResult)
+        console.log("Auth dataLogin:", dataLogin)
         // Usuario Existe?
         if (!dataLogin.usuario) {
             // Respuesta (Bad Request - 400)
@@ -52,6 +52,7 @@ app.post('/login', async (req, res) => {
         res.status(200).json({
             usuario: dataLogin.usuario,
             nombreUsuario: dataLogin.no_usulog,
+            perfil: dataLogin.no_perfil,
             token: token,
             valid: true
         });
