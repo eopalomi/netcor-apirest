@@ -1,7 +1,7 @@
 // Heroku App Conexion DB
 const pg_herokuapp = {
     //host: '165.227.68.255',
-    host: dbframe_pg14,
+    host: 'dbframe_pg14',
     database: 'frame',
     port: '5438',
     user: 'root',
@@ -16,7 +16,7 @@ const pg_herokuapp = {
 
 const pg_sjserviapp = {
     //host: '165.227.68.255',
-    host: dbframe_pg14,
+    host: 'dbframe_pg14',
     database: 'frame',
     port: '5438',
     user: 'root',
