@@ -362,7 +362,7 @@ app.get('/propos', async (req, res) => {
             });
         };
     } catch (e) {
-        // Respuesta (Internal Sever Error - 500)
+        // Respuesta (Internal Sever Error - 500)ssh root
         return res.status(500).json({
             valid: false,
             error_stack: e.stack,
@@ -629,11 +629,11 @@ app.post('/pagina-valpag', async (req, res) => {
     //console.log('query params', params);
     //console.log('en el body', body);
     // console.log('query_propagjs', body.id_pagina);
-    // console.log('body aquiii', body.js_valpag);
-    JSON.stringify()
+    console.log('body aquiii', body.js_valpag);
+    
     // [querys] Informacion del JS con el Propag de la Pagina
     let query_propagjs = `select * from frame.set_pagina_valpag(${body.id_pagina},'${body.js_valpag.split("'").join("''")}');`;
-    let carrie = ParseInt(123)
+    
     try {
         // Conectar y Ejecutar Query - Buscar JS de la Pagina
         const execPageJS = await db.query(query_propagjs);
